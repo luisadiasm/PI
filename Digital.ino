@@ -57,16 +57,10 @@ SoftwareSerial mySerial(2, 3); // RX, TX
 
 // Pinos de controle do motorshield LN298D
 // Os pinos escolhidos sao PWM uma possivel futura funcionalidade.
-int IN1 = 4; // para frente
-int IN2 = 5; // para tras
-int IN3 = 6; // vira esquerda
-int IN4 = 7; // vira direita
-
-
-//int headlight = 11; // o farol sera ligado no pino 11 pwm e tera 3
-                    // niveis de intensidade.
-//int backlight = 12; // sao as luzes traseiras 
-//int buzzer = 10;    // buzina do carrinho.
+int IN1 = 9; // para frente roxo
+int IN2 = 8; // para tras cinza
+int IN3 = 10; // vira esquerda branco
+int IN4 = 11; // vira direita preto 
 
 
 /*
@@ -79,15 +73,9 @@ int IN4 = 7; // vira direita
 byte rightState = 0;
 byte leftState = 0;
 
-//byte lightsState = 0; // verifica qual a intensidade das luzes
-
-//byte buzzerState = 0; // verifica qual o estado do buzzer
-
 byte command;  // nesta variavel sera guardado o byte enviado pelo
                // aplicativo
                
-//byte lights = 0;   // recebera o bit de comando das luzes
-//byte buzzerOn = 0; // recebera o bit de comando da buzina
 byte front, back, left, right; // estas variaveis receberao os bits
                                // de direcao correspondentes
 
@@ -104,26 +92,15 @@ void setup()
  pinMode(IN3, OUTPUT);
  pinMode(IN4, OUTPUT);
 
-// pinos das lampadas e da buzina
-// pinMode(headlight, OUTPUT);
-// pinMode(backlight, OUTPUT);
-// pinMode(buzzer,OUTPUT);
-
 // desativando todas as ligacoes dos motores
- digitalWrite(IN1,LOW);
- digitalWrite(IN2,LOW);
- digitalWrite(IN3,LOW);
- digitalWrite(IN4,LOW);
-
-// desativando som da buzina e luzes
-// digitalWrite(headlight,LOW);
-// digitalWrite(backlight,LOW);
-// noTone(buzzer);
-
+ digitalWrite(IN1,HIGH);
+ digitalWrite(IN2,HIGH);
+ analogWrite(IN3,255);
+ analogWrite(IN4,255);
 
 stability = 1;
-stabilityTimeLeft = 10;
-stabilityTimeRight = 16;
+stabilityTimeLeft = 10; 
+stabilityTimeRight = 16; 
 
 // Ativando a serial de conexao com o bluetooth.    
   mySerial.begin(9600);
@@ -145,9 +122,6 @@ void loop()
     back = bool(command & 2);      //bit 2
     left = bool(command & 4);      //bit 3
     right = bool(command & 8);     //bit 4
-    //lights =  bool(command & 16);  //bit 5
-    //buzzerOn = bool(command & 32); //bit 6
-
     
     //Se o comando de direcao for enviado, sera ativado o estado
     // correspondente, direita ou esquerda
@@ -159,8 +133,8 @@ void loop()
 
     
     //Neste ponto os motores serao acionados.
-    digitalWrite(IN3,left);
-    digitalWrite(IN4,right); 
+    analogWrite(IN3,left);
+    analogWrite(IN4,right); 
     digitalWrite(IN1,front);
     digitalWrite(IN2,back);
 
@@ -171,19 +145,19 @@ void loop()
  * desativado logo em seguida.
  */
     if(stability){
-      // estavilizacao para a direita.
+      // estaBilizacao para a direita.
       if((!right) && (rightState)){
-          digitalWrite(IN3,HIGH);
+          analogWrite(IN3,0);
           delay(stabilityTimeRight);  
-          digitalWrite(IN3,LOW);
+          analogWrite(IN3,255);
           rightState = 0;
         }
 
       //estabilizacao para a esquerda.
       if((!left) && (leftState)){
-          digitalWrite(IN4,HIGH);
+          analogWrite(IN4,0);
           delay(stabilityTimeLeft);  
-          digitalWrite(IN4,LOW);
+          analogWrite(IN4,255);
           leftState = 0;
         }
     } //if(stability){
@@ -192,32 +166,7 @@ void loop()
 /*
  * Acionamento das luzes. O farol tera 3 niveis. Como esta com PWM
  * sera acionado em multiplos de 85 indicado pelo lightsState
- */
-
-    // Cada vez que receber 1 no bit lights o bloco e executado
-    //if(lights){
-      // vai acumulando 85 ate chegar a 340 que retorna novamente
-      // a 0 (zero).
-    //  lightsState = (lightsState + 85)%340; 
-    //  analogWrite(headlight,lightsState); //PWM
-    //  digitalWrite(backlight,lightsState);//direto, unico nivel.      
-    //  }
-
-
-    // Cada vez que receber 1 no bit buzzer a buzina e ativada ou
-    // desativada.
-//    if(buzzerOn){
-//
-//      buzzerState = !buzzerState; // troca o estado
-//
-//      if(buzzerState){
-//        tone(buzzer,440); // frequencia da buzzina 440Hz.
-//      }
-//      else{
-//        noTone(buzzer);
-//      }
-//      
-//    } //if(buzzerOn){   
+ */ 
     
   } //if (mySerial.available())
   
