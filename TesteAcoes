@@ -1,0 +1,32 @@
+#include <Servo.h>
+
+int frente = 9; // para frente roxo
+int tras = 8; // para tras cinza
+Servo s; // vira esquerda branco
+
+void setup() {  
+ pinMode(frente, OUTPUT);
+ pinMode(tras, OUTPUT);
+ s.attach(10); 
+
+}
+
+void loop() {
+
+// digitalWrite(frente,LOW);
+// digitalWrite(tras,HIGH);
+// delay(1000);
+// digitalWrite(tras,LOW);
+// digitalWrite(frente,HIGH);
+// delay(1000);
+// digitalWrite(tras,HIGH);
+ s.write(92); 
+ delay(1000);
+ s.write(69); 
+ delay(1000);
+ s.write(115); 
+ delay(1000);
+ s.write(92);
+ delay(1000);
+
+}
