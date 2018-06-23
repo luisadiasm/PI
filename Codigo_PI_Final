@@ -1,0 +1,77 @@
+#include <SoftwareSerial.h>
+#include <Servo.h>
+
+SoftwareSerial mySerial(0, 1); // RX, TX
+
+int IN1 = 9; // Para frente 
+int IN2 = 8; // Para tras 
+Servo servo; // Controle de direção (direita, esquerda)
+byte command; // Nesta variavel sera guardado o byte enviado pelo aplicativo
+
+void setup()
+{
+  // Configurando os pinos de saida do motorshield
+  pinMode(IN1, OUTPUT);
+  pinMode(IN2, OUTPUT);
+  servo.attach(10); // Setando porta PWM
+
+  // Desativando todas as ligacoes dos motores e centralizando servo
+  digitalWrite(IN1, HIGH);
+  digitalWrite(IN2, HIGH);
+  servo.write(90);
+
+  // Ativando a serial de conexao com o bluetooth e servo
+  mySerial.begin(9600);
+  Serial.begin(9600);
+}
+
+void loop()
+{
+  if (mySerial.available())
+  {
+    command = mySerial.read(); // Recebe o byte da serial
+
+    // Desativando todas as ligacoes dos motores e centralizando servo quando reinicia o loop
+    servo.write(90);
+    digitalWrite(IN1, HIGH);
+    digitalWrite(IN2, HIGH);
+    
+    if (command == 1) {  // Se o estado recebido for igual a 1, o carro se movimenta para frente.
+      servo.write(88);
+      digitalWrite(IN1, LOW);
+    }
+
+    else if (command == 5) {  // Se o estado recebido for igual a 5, o carro se movimenta para Frente Esquerda.
+      digitalWrite(IN1, LOW);
+      servo.write(40);
+    }
+
+    else if (command == 9) {  // Se o estado recebido for igual a 9, o carro se movimenta para Frente Direita.
+      digitalWrite(IN1, LOW);
+      servo.write(115);
+    }
+
+    else if (command == 2) {  // Se o estado recebido for igual a 2, o carro se movimenta para trás.
+      servo.write(88);
+      digitalWrite(IN2, LOW);
+    }
+
+    else if (command == 6) {  // Se o estado recebido for igual a 6, o carro se movimenta para Trás Esquerda.
+      digitalWrite(IN2, LOW);
+      servo.write(40);
+    }
+
+    else if (command == 10) {  // Se o estado recebido for igual a 10, o carro se movimenta para Trás Direita.
+      digitalWrite(IN2, LOW);
+      servo.write(115);
+    }
+
+    else if (command == 4) {   // Se o estado recebido for igual a 4, o carro se movimenta para esquerda.
+      servo.write(40);
+    }
+
+    else if (command == 8) {   // Se o estado recebido for igual a 8, o carro se movimenta para direita.
+      servo.write(115);
+    }
+  } //if (mySerial.available())
+} // void loop ()
